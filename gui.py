@@ -1,10 +1,10 @@
 "Interfaz gráfica"
 
 import customtkinter as ctk
-from config import Wallpaper, WallpaperDownload, api_url
+from config import Wallpaper, WallpaperDownload
 
-wallpaper = Wallpaper(api_url)
-wallpaper_download = WallpaperDownload(api_url)
+wallpaper = Wallpaper()
+wallpaper_download = WallpaperDownload()
 photo = ctk.CTkImage(wallpaper_download.obtener_imagen(), size=(500, 281))
 
 ventana = ctk.CTk()
