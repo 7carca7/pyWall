@@ -36,7 +36,7 @@ class WallpaperDownload(Wallpaper):
         return imagen
 
     def descargar_imagen(self):
-        "Descarga la imagen"
+        "Descarga la imagen en la ubicación selecctionada"
 
         response = requests.get(self.bing_wallpaper_url()[0], timeout=20)
 
