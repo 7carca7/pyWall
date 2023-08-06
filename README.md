@@ -1,2 +1,2 @@
 # pyWall
-Simple UI para la imagen del día de bing
+Simple UI para la imagen del día de Bing
