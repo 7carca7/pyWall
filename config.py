@@ -1,5 +1,4 @@
-"Configuración"
-
+"Configuration"
 
 from datetime import date
 import io
@@ -7,43 +6,71 @@ from tkinter.filedialog import asksaveasfilename
 import requests
 from PIL import Image
 
+API_URL = "https://bing.biturl.top/?resolution=3840&format=json&index=0&mkt=en-US"
+
 
 class Wallpaper:
+    "This class is used to fetch the URL of the Bing's wallpaper of the day"
+
     def __init__(self):
-        self.url = "https://bing.biturl.top/?resolution=3840&format=json&index=0&mkt=en-US"
+        self.url = API_URL
 
     def bing_wallpaper_url(self):
-        "Obtiene la url de la imagen"
+        "Gets the image url and the image cleaned description"
 
-        response = requests.get(self.url, timeout=20)
+        try:
+            response = requests.get(self.url, timeout=20)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as err:
+            print(f"An error occurred while getting the wallpaper URL: {err}")
+            return None
+
         data = response.json()
         image_url = data["url"]
-        image_descripcion = data["copyright"]
-        descrip_limpia = image_descripcion.split(',')[0].split('(')[0]
-        return image_url, descrip_limpia
+        image_description = data["copyright"]
+        cleaned_description = image_description.split(',')[0].split('(')[0]
+        return image_url, cleaned_description
 
 
 class WallpaperDownload(Wallpaper):
-    def __init__(self):
-        super().__init__()
+    "This class is used to download the Bing's wallpaper of the day"
 
-    def obtener_imagen(self):
-        "Obtiene la imagen desde la URL"
+    def get_response_content(self):
+        "This method fetches response content from the URL obtained from the bing_wallpaper_url"
+        try:
+            response = requests.get(self.bing_wallpaper_url()[0], timeout=20)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as err:
+            print(
+                f"An error occurred while getting the response content: {err}")
+            return None
 
-        response = requests.get(self.bing_wallpaper_url()[0], timeout=20)
-        raw_data = response.content
-        imagen = Image.open(io.BytesIO(raw_data))
-        return imagen
+        return response.content
 
-    def descargar_imagen(self):
-        "Descarga la imagen en la ubicación selecctionada"
+    def get_image(self):
+        "This method fetches the image from the URL obtained from the bing_wallpaper_url method."
 
-        response = requests.get(self.bing_wallpaper_url()[0], timeout=20)
+        raw_data = self.get_response_content()
+        if raw_data is None:
+            return None
 
-        fecha_actual = date.today()
-        nombre = str(fecha_actual)+".jpg"
+        image = Image.open(io.BytesIO(raw_data))
+        return image
 
-        guardado = asksaveasfilename(initialfile=nombre)
-        if guardado:
-            with open(guardado, "wb") as archivo:
-                archivo.write(response.content)
+    def download_image(self):
+        "This method downloads the image fetched and saves it to the selected location"
+
+        raw_data = self.get_response_content()
+        if raw_data is None:
+            return None
+
+        current_date = date.today()
+        name = str(current_date) + ".jpg"
+
+        saved_file = asksaveasfilename(initialfile=name)
+        if saved_file:
+            try:
+                with open(saved_file, "wb") as file:
+                    file.write(raw_data)
+            except IOError as err:
+                print(f"An error occurred while saving the image: {err}")

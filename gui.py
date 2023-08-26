@@ -1,53 +1,54 @@
-"Interfaz gráfica"
+"User interface"
 
 import customtkinter as ctk
 from config import Wallpaper, WallpaperDownload
 
 wallpaper = Wallpaper()
 wallpaper_download = WallpaperDownload()
-photo = ctk.CTkImage(wallpaper_download.obtener_imagen(), size=(500, 281))
+photo = ctk.CTkImage(wallpaper_download.get_image(), size=(500, 281))
 
-ventana = ctk.CTk()
-ventana.configure()
-ventana.geometry("520x340")
-ventana.resizable(False, False)
-ventana.title("pyWall")
-ventana.grid_columnconfigure(0, weight=1)
-ventana.grid_rowconfigure(0, weight=1)
-
-
-frame_principal = ctk.CTkFrame(ventana, fg_color="transparent")
-frame_principal.grid(row=0, column=0, pady=0, sticky="nswe")
-frame_principal.grid_rowconfigure(0, weight=4)
-frame_principal.grid_rowconfigure(1, weight=0)
-frame_principal.grid_columnconfigure(0, weight=1)
+# MAIN APP
+window = ctk.CTk()
+window.configure()
+window.geometry("520x340")
+window.resizable(False, False)
+window.title("pyWall")
+window.grid_columnconfigure(0, weight=1)
+window.grid_rowconfigure(0, weight=1)
 
 
-frame_imagen = ctk.CTkFrame(frame_principal, fg_color="transparent")
-frame_imagen.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nswe")
+frame_main = ctk.CTkFrame(window, fg_color="transparent")
+frame_main.grid(row=0, column=0, pady=0, sticky="nswe")
+frame_main.grid_rowconfigure(0, weight=4)
+frame_main.grid_rowconfigure(1, weight=0)
+frame_main.grid_columnconfigure(0, weight=1)
 
 
-label_imagen = ctk.CTkLabel(frame_imagen, image=photo, text="")
-label_imagen.grid(row=0, column=0, sticky="nswe")
+frame_image = ctk.CTkFrame(frame_main, fg_color="transparent")
+frame_image.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nswe")
 
 
-frame_botones = ctk.CTkFrame(frame_principal, fg_color="transparent")
-frame_botones.grid(row=1, column=0, padx=10, pady=10, sticky="we")
-frame_botones.grid_columnconfigure(0, weight=4)
-frame_botones.grid_columnconfigure(1, weight=1)
+label_image = ctk.CTkLabel(frame_image, image=photo, text="")
+label_image.grid(row=0, column=0, sticky="nswe")
 
 
-descrip_imagen = ctk.CTkLabel(
-    frame_botones, text=wallpaper.bing_wallpaper_url()[1], text_color="#e9967a", anchor="w")
-descrip_imagen.grid(row=0, column=0, padx=0, sticky="we")
+frame_buttons = ctk.CTkFrame(frame_main, fg_color="transparent")
+frame_buttons.grid(row=1, column=0, padx=10, pady=10, sticky="we")
+frame_buttons.grid_columnconfigure(0, weight=4)
+frame_buttons.grid_columnconfigure(1, weight=1)
 
 
-boton_descargar_imagen = ctk.CTkButton(
-    frame_botones, text="Descargar", text_color=("#F6F6F6", "#242424"),
-    command=wallpaper_download.descargar_imagen)
-boton_descargar_imagen.grid(row=0, column=1, padx=0, sticky="e")
-boton_descargar_imagen.configure(
+image_descrip = ctk.CTkLabel(
+    frame_buttons, text=wallpaper.bing_wallpaper_url()[1], text_color="#e9967a", anchor="w")
+image_descrip.grid(row=0, column=0, padx=0, sticky="we")
+
+# DOWNLOAD BUTTON
+button_download_image = ctk.CTkButton(
+    frame_buttons, text="Download", text_color=("#F6F6F6", "#242424"),
+    command=wallpaper_download.download_image)
+button_download_image.grid(row=0, column=1, padx=0, sticky="e")
+button_download_image.configure(
     width=0, fg_color="#e9967a", hover_color="#C68068")
 
-
-ventana.mainloop()
+# RUN APP
+window.mainloop()
