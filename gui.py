@@ -1,4 +1,4 @@
-"User interface"
+"""User interface"""
 
 import customtkinter as ctk
 from config import Wallpaper, WallpaperDownload
