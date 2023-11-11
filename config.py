@@ -1,6 +1,5 @@
 "Configuration"
 
-from datetime import date
 import io
 from tkinter.filedialog import asksaveasfilename
 import requests
@@ -23,7 +22,7 @@ class Wallpaper:
             response.raise_for_status()
         except requests.exceptions.RequestException as err:
             print(f"An error occurred while getting the wallpaper URL: {err}")
-            return None
+            return None, "No URL information received"
 
         data = response.json()
         image_url = data["url"]
@@ -37,8 +36,14 @@ class WallpaperDownload(Wallpaper):
 
     def get_response_content(self):
         "This method fetches response content from the URL obtained from the bing_wallpaper_url"
+
+        url_info = self.bing_wallpaper_url()
+        if url_info is None or url_info[0] is None:
+            print("No URL information received")
+            return None
+
         try:
-            response = requests.get(self.bing_wallpaper_url()[0], timeout=20)
+            response = requests.get(url_info[0], timeout=20)
             response.raise_for_status()
         except requests.exceptions.RequestException as err:
             print(
@@ -52,7 +57,8 @@ class WallpaperDownload(Wallpaper):
 
         raw_data = self.get_response_content()
         if raw_data is None:
-            return None
+            # Create and return a transparent image
+            return Image.new('RGBA', (500, 500), (0, 0, 0, 0))
 
         image = Image.open(io.BytesIO(raw_data))
         return image
@@ -64,8 +70,13 @@ class WallpaperDownload(Wallpaper):
         if raw_data is None:
             return None
 
-        current_date = date.today()
-        name = str(current_date) + ".jpg"
+        url_info = self.bing_wallpaper_url()
+        if url_info is None:
+            print("No URL information received")
+            return None
+
+        cleaned_description = url_info[1]
+        name = cleaned_description + ".jpg"
 
         saved_file = asksaveasfilename(initialfile=name)
         if saved_file:
